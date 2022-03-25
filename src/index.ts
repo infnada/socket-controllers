@@ -1,9 +1,8 @@
-import {MetadataArgsStorage} from "./metadata-builder/MetadataArgsStorage";
-import {importClassesFromDirectories} from "./util/DirectoryExportedClassesLoader";
-import {SocketControllerExecutor} from "./SocketControllerExecutor";
-import {SocketControllersOptions} from "./SocketControllersOptions";
-import {getFromContainer} from "./container";
-
+import { MetadataArgsStorage } from "./metadata-builder/MetadataArgsStorage";
+import { importClassesFromDirectories } from "./util/DirectoryExportedClassesLoader";
+import { SocketControllerExecutor } from "./SocketControllerExecutor";
+import { SocketControllersOptions } from "./SocketControllersOptions";
+import { getFromContainer } from "./container";
 // -------------------------------------------------------------------------
 // Main Functions
 // -------------------------------------------------------------------------
@@ -12,31 +11,32 @@ import {getFromContainer} from "./container";
  * Registers all loaded actions in your express application.
  */
 export function useSocketServer<T>(io: T, options?: SocketControllersOptions): T {
-    createExecutor(io, options || {});
-    return io;
+  createExecutor(io, options || {});
+  return io;
 }
 
 /**
  * Registers all loaded actions in your express application.
  */
 export function createSocketServer(port: number, options?: SocketControllersOptions): any {
-    const io = require("socket.io")(port);
-    createExecutor(io, options || {});
-    return io;
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const io = require('socket.io')(port);
+  createExecutor(io, options || {});
+  return io;
 }
 
 /**
  * Gets socket.io instance
  */
 export function getSocketIO() {
-    return getSocketExecutor().io;
+  return getSocketExecutor().io;
 }
 
 /**
  * Get socket executor
  */
 function getSocketExecutor() {
-    return getFromContainer(SocketControllerExecutor);
+  return getFromContainer(SocketControllerExecutor);
 }
 
 /**
@@ -44,24 +44,26 @@ function getSocketExecutor() {
  */
 function createExecutor(io: any, options: SocketControllersOptions): void {
 
-    // second import all controllers and middlewares and error handlers
-    let controllerClasses: Function[];
-    if (options && options.controllers && options.controllers.length)
-        controllerClasses = (options.controllers as any[]).filter(controller => controller instanceof Function);
-    const controllerDirs = (options.controllers as any[]).filter(controller => typeof controller === "string");
+  // second import all controllers and middlewares and error handlers
+  let controllerClasses: Function[];
+  if (options && options.controllers && options.controllers.length) {
+    controllerClasses = (options.controllers as any[]).filter(controller => controller instanceof Function);
+    const controllerDirs = (options.controllers as any[]).filter(controller => typeof controller === 'string');
     controllerClasses.push(...importClassesFromDirectories(controllerDirs));
+  }
 
-    let middlewareClasses: Function[];
-    if (options && options.middlewares && options.middlewares.length) {
-        middlewareClasses = (options.middlewares as any[]).filter(controller => controller instanceof Function);
-        const middlewareDirs = (options.middlewares as any[]).filter(controller => typeof controller === "string");
-        middlewareClasses.push(...importClassesFromDirectories(middlewareDirs));
-    }
 
-    // run socket controller register and other operations
-    getSocketExecutor()
-        .init(io, options)
-        .execute(controllerClasses, middlewareClasses);
+  let middlewareClasses: Function[];
+  if (options && options.middlewares && options.middlewares.length) {
+    middlewareClasses = (options.middlewares as any[]).filter(controller => controller instanceof Function);
+    const middlewareDirs = (options.middlewares as any[]).filter(controller => typeof controller === 'string');
+    middlewareClasses.push(...importClassesFromDirectories(middlewareDirs));
+  }
+
+  // run socket controller register and other operations
+  getSocketExecutor()
+    .init(io, options)
+    .execute(controllerClasses, middlewareClasses);
 }
 
 // -------------------------------------------------------------------------
@@ -72,10 +74,10 @@ function createExecutor(io: any, options: SocketControllersOptions): void {
  * Gets the metadata arguments storage.
  */
 export function defaultMetadataArgsStorage(): MetadataArgsStorage {
-    if (!(global as any).socketControllersMetadataArgsStorage)
-        (global as any).socketControllersMetadataArgsStorage = new MetadataArgsStorage();
+  if (!(global as any).socketControllersMetadataArgsStorage)
+    (global as any).socketControllersMetadataArgsStorage = new MetadataArgsStorage();
 
-    return (global as any).socketControllersMetadataArgsStorage;
+  return (global as any).socketControllersMetadataArgsStorage;
 }
 
 // -------------------------------------------------------------------------
