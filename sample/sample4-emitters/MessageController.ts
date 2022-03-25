@@ -7,9 +7,9 @@ import {
   OnMessage,
   EmitOnSuccess,
   EmitOnFail,
-  SkipEmitOnEmptyResult
-} from "../../src/index";
-import { Message } from "./Message";
+  SkipEmitOnEmptyResult,
+} from '../../src/index';
+import { Message } from './Message';
 
 @SocketController()
 export class MessageController {

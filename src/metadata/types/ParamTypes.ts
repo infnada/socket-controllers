@@ -29,5 +29,4 @@ export class ParamTypes {
   static NAMESPACE_PARAMS: ParamType = 'namespace-params';
   static NAMESPACE_PARAM: ParamType = 'namespace-param';
   static CURRENT_USER: ParamType = 'current-user';
-
 }

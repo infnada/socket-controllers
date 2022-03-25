@@ -1,5 +1,5 @@
-import { OnConnect, SocketController, ConnectedSocket, OnDisconnect, MessageBody, OnMessage } from "../../src/index";
-import { Message } from "./Message";
+import { OnConnect, SocketController, ConnectedSocket, OnDisconnect, MessageBody, OnMessage } from '../../src/index';
+import { Message } from './Message';
 
 @SocketController()
 export class MessageController {
@@ -20,5 +20,4 @@ export class MessageController {
     message.id = 1;
     socket.emit('message_saved', message);
   }
-
 }

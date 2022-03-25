@@ -1,6 +1,6 @@
-import {ResultMetadataArgs} from "../metadata/args/ResultMetadataArgs";
-import {ResultTypes} from "../metadata/types/ResultTypes";
-import {defaultMetadataArgsStorage} from "../index";
+import { ResultMetadataArgs } from '../metadata/args/ResultMetadataArgs';
+import { ResultTypes } from '../metadata/types/ResultTypes';
+import { defaultMetadataArgsStorage } from '../index';
 
 /**
  * Used in conjunction with @EmitOnSuccess and @EmitOnFail decorators.
@@ -8,12 +8,12 @@ import {defaultMetadataArgsStorage} from "../index";
  * or @EmitOnFail decorators.
  */
 export function SkipEmitOnEmptyResult(): Function {
-    return function (object: Object, methodName: string) {
-        const metadata: ResultMetadataArgs = {
-            target: object.constructor,
-            method: methodName,
-            type: ResultTypes.SKIP_EMIT_ON_EMPTY_RESULT
-        };
-        defaultMetadataArgsStorage().results.push(metadata);
+  return function (object: Object, methodName: string) {
+    const metadata: ResultMetadataArgs = {
+      target: object.constructor,
+      method: methodName,
+      type: ResultTypes.SKIP_EMIT_ON_EMPTY_RESULT,
     };
+    defaultMetadataArgsStorage().results.push(metadata);
+  };
 }

@@ -9,7 +9,6 @@ import { UseMetadataArgs } from '../metadata/args/UseMetadataArgs';
  * Storage all metadatas read from decorators.
  */
 export class MetadataArgsStorage {
-
   // -------------------------------------------------------------------------
   // Properties
   // -------------------------------------------------------------------------
@@ -68,5 +67,4 @@ export class MetadataArgsStorage {
     this.actions = [];
     this.params = [];
   }
-
 }

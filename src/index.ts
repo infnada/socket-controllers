@@ -1,8 +1,8 @@
-import { MetadataArgsStorage } from "./metadata-builder/MetadataArgsStorage";
-import { importClassesFromDirectories } from "./util/DirectoryExportedClassesLoader";
-import { SocketControllerExecutor } from "./SocketControllerExecutor";
-import { SocketControllersOptions } from "./SocketControllersOptions";
-import { getFromContainer } from "./container";
+import { MetadataArgsStorage } from './metadata-builder/MetadataArgsStorage';
+import { importClassesFromDirectories } from './util/DirectoryExportedClassesLoader';
+import { SocketControllerExecutor } from './SocketControllerExecutor';
+import { SocketControllersOptions } from './SocketControllersOptions';
+import { getFromContainer } from './container';
 // -------------------------------------------------------------------------
 // Main Functions
 // -------------------------------------------------------------------------
@@ -43,7 +43,6 @@ function getSocketExecutor() {
  * Registers all loaded actions in your express application.
  */
 function createExecutor(io: any, options: SocketControllersOptions): void {
-
   // second import all controllers and middlewares and error handlers
   let controllerClasses: Function[];
   if (options && options.controllers && options.controllers.length) {
@@ -51,7 +50,6 @@ function createExecutor(io: any, options: SocketControllersOptions): void {
     const controllerDirs = (options.controllers as any[]).filter(controller => typeof controller === 'string');
     controllerClasses.push(...importClassesFromDirectories(controllerDirs));
   }
-
 
   let middlewareClasses: Function[];
   if (options && options.middlewares && options.middlewares.length) {
@@ -61,9 +59,7 @@ function createExecutor(io: any, options: SocketControllersOptions): void {
   }
 
   // run socket controller register and other operations
-  getSocketExecutor()
-    .init(io, options)
-    .execute(controllerClasses, middlewareClasses);
+  getSocketExecutor().init(io, options).execute(controllerClasses, middlewareClasses);
 }
 
 // -------------------------------------------------------------------------
@@ -84,25 +80,25 @@ export function defaultMetadataArgsStorage(): MetadataArgsStorage {
 // Commonly Used exports
 // -------------------------------------------------------------------------
 
-export * from "./container";
-export * from "./SocketControllersOptions";
-export * from "./MiddlewareInterface";
+export * from './container';
+export * from './SocketControllersOptions';
+export * from './MiddlewareInterface';
 
 // decorators
-export * from "./decorator/SocketController";
-export * from "./decorator/SocketIO";
-export * from "./decorator/SocketId";
-export * from "./decorator/SocketRequest";
-export * from "./decorator/SocketRooms";
-export * from "./decorator/SocketQueryParam";
-export * from "./decorator/ConnectedSocket";
-export * from "./decorator/OnConnect";
-export * from "./decorator/OnDisconnect";
-export * from "./decorator/OnMessage";
-export * from "./decorator/EmitOnSuccess";
-export * from "./decorator/EmitOnFail";
-export * from "./decorator/SkipEmitOnEmptyResult";
-export * from "./decorator/Middleware";
-export * from "./decorator/MessageBody";
-export * from "./decorator/NspParams";
-export * from "./decorator/NspParam";
+export * from './decorator/SocketController';
+export * from './decorator/SocketIO';
+export * from './decorator/SocketId';
+export * from './decorator/SocketRequest';
+export * from './decorator/SocketRooms';
+export * from './decorator/SocketQueryParam';
+export * from './decorator/ConnectedSocket';
+export * from './decorator/OnConnect';
+export * from './decorator/OnDisconnect';
+export * from './decorator/OnMessage';
+export * from './decorator/EmitOnSuccess';
+export * from './decorator/EmitOnFail';
+export * from './decorator/SkipEmitOnEmptyResult';
+export * from './decorator/Middleware';
+export * from './decorator/MessageBody';
+export * from './decorator/NspParams';
+export * from './decorator/NspParam';

@@ -10,12 +10,10 @@ import { pathToRegexp } from 'path-to-regexp';
 import { CurrentUserChecker } from './CurrentUserChecker';
 import { SocketControllersOptions } from './SocketControllersOptions';
 
-
 /**
  * Registers controllers and actions in the given server framework.
  */
 export class SocketControllerExecutor {
-
   // -------------------------------------------------------------------------
   // Public properties
   // -------------------------------------------------------------------------
@@ -135,16 +133,15 @@ export class SocketControllerExecutor {
           this.handleAction(action, { socket: socket })
             .then(result => this.handleSuccessResult(result, action, socket))
             .catch(error => this.handleFailResult(error, action, socket));
-
         } else if (action.type === ActionTypes.DISCONNECT) {
           socket.on('disconnect', () => {
             this.handleAction(action, { socket: socket })
               .then(result => this.handleSuccessResult(result, action, socket))
               .catch(error => this.handleFailResult(error, action, socket));
           });
-
         } else if (action.type === ActionTypes.MESSAGE) {
-          socket.on(action.name, (data: any) => { // todo get multiple args
+          socket.on(action.name, (data: any) => {
+            // todo get multiple args
             this.handleAction(action, { socket: socket, data: data })
               .then(result => this.handleSuccessResult(result, action, socket))
               .catch(error => this.handleFailResult(error, action, socket));
@@ -154,40 +151,30 @@ export class SocketControllerExecutor {
     });
   }
 
-  private handleAction(action: ActionMetadata, options: { socket?: any, data?: any }): Promise<any> {
-
+  private handleAction(action: ActionMetadata, options: { socket?: any; data?: any }): Promise<any> {
     // compute all parameters
     const paramsPromises = action.params
       .sort((param1, param2) => param1.index - param2.index)
       .map(param => {
         if (param.type === ParamTypes.CONNECTED_SOCKET) {
           return options.socket;
-
         } else if (param.type === ParamTypes.SOCKET_IO) {
           return this.io;
-
         } else if (param.type === ParamTypes.SOCKET_QUERY_PARAM) {
           return options.socket.handshake.query[param.value];
-
         } else if (param.type === ParamTypes.SOCKET_ID) {
           return options.socket.id;
-
         } else if (param.type === ParamTypes.SOCKET_REQUEST) {
           return options.socket.request;
-
         } else if (param.type === ParamTypes.SOCKET_ROOMS) {
           return options.socket.rooms;
-
         } else if (param.type === ParamTypes.NAMESPACE_PARAMS) {
           return this.handleNamespaceParams(options.socket, action, param);
-
         } else if (param.type === ParamTypes.NAMESPACE_PARAM) {
           const params: any[] = this.handleNamespaceParams(options.socket, action, param);
           return params[param.value];
-
         } else if (param.type === ParamTypes.CURRENT_USER) {
           return this.currentUserChecker(options.socket);
-
         } else {
           return this.handleParam(param, options);
         }
@@ -261,7 +248,6 @@ export class SocketControllerExecutor {
     } else if ((result === null || result === undefined) && action.emitOnSuccess && !action.skipEmitOnEmptyResult) {
       socket.emit(action.emitOnSuccess.value);
     }
-
   }
 
   private handleFailResult(result: any, action: ActionMetadata, socket: any) {
@@ -288,5 +274,4 @@ export class SocketControllerExecutor {
     });
     return params;
   }
-
 }

@@ -1,5 +1,5 @@
-import { OnConnect, SocketController, ConnectedSocket, OnDisconnect, MessageBody, OnMessage } from "../../src/index";
-import { Message } from "./Message";
+import { OnConnect, SocketController, ConnectedSocket, OnDisconnect, MessageBody, OnMessage } from '../../src/index';
+import { Message } from './Message';
 
 @SocketController('/messages')
 export class MessageController {

@@ -5,9 +5,9 @@ import {
   OnDisconnect,
   MessageBody,
   OnMessage,
-  NspParams
-} from "../../src/index";
-import { Message } from "./Message";
+  NspParams,
+} from '../../src/index';
+import { Message } from './Message';
 
 @SocketController('/messages/:id')
 export class MessageController {
