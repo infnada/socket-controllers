@@ -94,6 +94,7 @@ export * from './decorator/SocketQueryParam';
 export * from './decorator/ConnectedSocket';
 export * from './decorator/OnConnect';
 export * from './decorator/OnDisconnect';
+export * from './decorator/OnDisconnecting';
 export * from './decorator/OnMessage';
 export * from './decorator/EmitOnSuccess';
 export * from './decorator/EmitOnFail';
