@@ -7,6 +7,8 @@ import { ParameterParseJsonError } from './error/ParameterParseJsonError';
 import { ParamTypes } from './metadata/types/ParamTypes';
 import { ControllerMetadata } from './metadata/ControllerMetadata';
 import { pathToRegexp } from 'path-to-regexp';
+import { CurrentUserChecker } from './CurrentUserChecker';
+import { SocketControllersOptions } from './SocketControllersOptions';
 
 /**
  * Registers controllers and actions in the given server framework.
@@ -34,6 +36,16 @@ export class SocketControllerExecutor {
    */
   plainToClassTransformOptions: ClassTransformOptions;
 
+  /**
+   * Special function used to get currently authorized user.
+   */
+  currentUserChecker: CurrentUserChecker;
+
+  /**
+   * Specified socket.io instance
+   */
+  io: any;
+
   // -------------------------------------------------------------------------
   // Private properties
   // -------------------------------------------------------------------------
@@ -41,16 +53,24 @@ export class SocketControllerExecutor {
   private metadataBuilder: MetadataBuilder;
 
   // -------------------------------------------------------------------------
-  // Constructor
-  // -------------------------------------------------------------------------
-
-  constructor(private io: any) {
-    this.metadataBuilder = new MetadataBuilder();
-  }
-
-  // -------------------------------------------------------------------------
   // Public Methods
   // -------------------------------------------------------------------------
+
+  init(io: any, options: SocketControllersOptions) {
+    this.io = io;
+    this.metadataBuilder = new MetadataBuilder();
+
+    if (options.useClassTransformer !== undefined) {
+      this.useClassTransformer = options.useClassTransformer;
+    } else {
+      this.useClassTransformer = true;
+    }
+
+    this.classToPlainTransformOptions = options.classToPlainTransformOptions;
+    this.plainToClassTransformOptions = options.plainToClassTransformOptions;
+    this.currentUserChecker = options.currentUserChecker;
+    return this;
+  }
 
   execute(controllerClasses?: Function[], middlewareClasses?: Function[]) {
     this.registerControllers(controllerClasses);
@@ -103,11 +123,22 @@ export class SocketControllerExecutor {
 
   private handleConnection(controllers: ControllerMetadata[], socket: any) {
     controllers.forEach(controller => {
+      controller.uses.forEach(middleware => {
+        socket.use((pocket: any, next: (err?: any) => any) => {
+          middleware.instance.use(pocket, next); // TODO: pass socket instance?
+        });
+      });
       controller.actions.forEach(action => {
         if (action.type === ActionTypes.CONNECT) {
           this.handleAction(action, { socket: socket })
             .then(result => this.handleSuccessResult(result, action, socket))
             .catch(error => this.handleFailResult(error, action, socket));
+        } else if (action.type === ActionTypes.DISCONNECTING) {
+          socket.on('disconnecting', () => {
+            this.handleAction(action, { socket: socket })
+              .then(result => this.handleSuccessResult(result, action, socket))
+              .catch(error => this.handleFailResult(error, action, socket));
+          });
         } else if (action.type === ActionTypes.DISCONNECT) {
           socket.on('disconnect', () => {
             this.handleAction(action, { socket: socket })
@@ -148,6 +179,8 @@ export class SocketControllerExecutor {
         } else if (param.type === ParamTypes.NAMESPACE_PARAM) {
           const params: any[] = this.handleNamespaceParams(options.socket, action, param);
           return params[param.value];
+        } else if (param.type === ParamTypes.CURRENT_USER) {
+          return this.currentUserChecker(options.socket);
         } else {
           return this.handleParam(param, options);
         }

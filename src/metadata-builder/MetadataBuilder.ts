@@ -4,6 +4,7 @@ import { ActionMetadata } from '../metadata/ActionMetadata';
 import { ParamMetadata } from '../metadata/ParamMetadata';
 import { MiddlewareMetadata } from '../metadata/MiddlewareMetadata';
 import { ResultMetadata } from '../metadata/ResultMetadata';
+import { UseMetadata } from '../metadata/UseMetadata';
 
 /**
  * Builds metadata from the given metadata arguments.
@@ -39,6 +40,7 @@ export class MetadataBuilder {
     return controllers.map(controllerArgs => {
       const controller = new ControllerMetadata(controllerArgs);
       controller.actions = this.createActions(controller);
+      controller.uses = this.createControllerUses(controller);
       return controller;
     });
   }
@@ -52,6 +54,15 @@ export class MetadataBuilder {
         action.results = this.createResults(action);
         return action;
       });
+  }
+
+  /**
+   * Creates use metadatas for controllers.
+   */
+  protected createControllerUses(controller: ControllerMetadata): UseMetadata[] {
+    return defaultMetadataArgsStorage()
+      .filterUsesWithTarget(controller.target)
+      .map(useArgs => new UseMetadata(useArgs));
   }
 
   private createParams(action: ActionMetadata): ParamMetadata[] {

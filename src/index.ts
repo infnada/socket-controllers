@@ -2,7 +2,7 @@ import { MetadataArgsStorage } from './metadata-builder/MetadataArgsStorage';
 import { importClassesFromDirectories } from './util/DirectoryExportedClassesLoader';
 import { SocketControllerExecutor } from './SocketControllerExecutor';
 import { SocketControllersOptions } from './SocketControllersOptions';
-
+import { getFromContainer } from './container';
 // -------------------------------------------------------------------------
 // Main Functions
 // -------------------------------------------------------------------------
@@ -26,17 +26,30 @@ export function createSocketServer(port: number, options?: SocketControllersOpti
 }
 
 /**
+ * Gets socket.io instance
+ */
+export function getSocketIO() {
+  return getSocketExecutor().io;
+}
+
+/**
+ * Get socket executor
+ */
+function getSocketExecutor() {
+  return getFromContainer(SocketControllerExecutor);
+}
+
+/**
  * Registers all loaded actions in your express application.
  */
 function createExecutor(io: any, options: SocketControllersOptions): void {
-  const executor = new SocketControllerExecutor(io);
-
   // second import all controllers and middlewares and error handlers
   let controllerClasses: Function[];
-  if (options && options.controllers && options.controllers.length)
+  if (options && options.controllers && options.controllers.length) {
     controllerClasses = (options.controllers as any[]).filter(controller => controller instanceof Function);
-  const controllerDirs = (options.controllers as any[]).filter(controller => typeof controller === 'string');
-  controllerClasses.push(...importClassesFromDirectories(controllerDirs));
+    const controllerDirs = (options.controllers as any[]).filter(controller => typeof controller === 'string');
+    controllerClasses.push(...importClassesFromDirectories(controllerDirs));
+  }
 
   let middlewareClasses: Function[];
   if (options && options.middlewares && options.middlewares.length) {
@@ -45,17 +58,8 @@ function createExecutor(io: any, options: SocketControllersOptions): void {
     middlewareClasses.push(...importClassesFromDirectories(middlewareDirs));
   }
 
-  if (options.useClassTransformer !== undefined) {
-    executor.useClassTransformer = options.useClassTransformer;
-  } else {
-    executor.useClassTransformer = true;
-  }
-
-  executor.classToPlainTransformOptions = options.classToPlainTransformOptions;
-  executor.plainToClassTransformOptions = options.plainToClassTransformOptions;
-
   // run socket controller register and other operations
-  executor.execute(controllerClasses, middlewareClasses);
+  getSocketExecutor().init(io, options).execute(controllerClasses, middlewareClasses);
 }
 
 // -------------------------------------------------------------------------
@@ -77,6 +81,25 @@ export function defaultMetadataArgsStorage(): MetadataArgsStorage {
 // -------------------------------------------------------------------------
 
 export * from './container';
-export * from './decorators';
 export * from './SocketControllersOptions';
 export * from './MiddlewareInterface';
+
+// decorators
+export * from './decorator/SocketController';
+export * from './decorator/SocketIO';
+export * from './decorator/SocketId';
+export * from './decorator/SocketRequest';
+export * from './decorator/SocketRooms';
+export * from './decorator/SocketQueryParam';
+export * from './decorator/ConnectedSocket';
+export * from './decorator/OnConnect';
+export * from './decorator/OnDisconnect';
+export * from './decorator/OnDisconnecting';
+export * from './decorator/OnMessage';
+export * from './decorator/EmitOnSuccess';
+export * from './decorator/EmitOnFail';
+export * from './decorator/SkipEmitOnEmptyResult';
+export * from './decorator/Middleware';
+export * from './decorator/MessageBody';
+export * from './decorator/NspParams';
+export * from './decorator/NspParam';

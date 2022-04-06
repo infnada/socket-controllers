@@ -35,6 +35,7 @@ Use class-based controllers to handle websocket events. Helps to organize your c
      OnConnect,
      SocketController,
      ConnectedSocket,
+     OnDisconnecting,
      OnDisconnect,
      MessageBody,
      OnMessage,
@@ -45,6 +46,12 @@ Use class-based controllers to handle websocket events. Helps to organize your c
      @OnConnect()
      connection(@ConnectedSocket() socket: any) {
        console.log('client connected');
+     }
+
+     @OnDisconnecting()
+     disconnecting(@ConnectedSocket() socket: any) {
+       console.log('client is disconnecting');
+       console.log(socket.rooms);
      }
 
      @OnDisconnect()
@@ -82,10 +89,11 @@ Use class-based controllers to handle websocket events. Helps to organize your c
 #### Run code on socket client connect / disconnect
 
 Controller action marked with `@OnConnect()` decorator is called once new client connected.
+Controller action marked with `@OnDisconnecting()` decorator is called when the client is going to be disconnected (but hasn't left its rooms yet).
 Controller action marked with `@OnDisconnect()` decorator is called once client disconnected.
 
 ```typescript
-import { SocketController, OnConnect, OnDisconnect } from 'socket-controllers';
+import { SocketController, OnConnect, OnDisconnecting, OnDisconnect } from 'socket-controllers';
 
 @SocketController()
 export class MessageController {
@@ -93,6 +101,12 @@ export class MessageController {
   save() {
     console.log('client connected');
   }
+
+  @OnDisconnecting()
+     disconnecting(@ConnectedSocket() socket: any) {
+       console.log('client is disconnecting');
+       console.log(socket.rooms);
+     }
 
   @OnDisconnect()
   save() {
@@ -411,6 +425,7 @@ export class MessageController {
 | `@SocketController(namespace?: string\|Regex)` | Registers a class to be a socket controller that can listen to websocket events and respond to them.                                                                                                                                                                       |
 | `@OnMessage(messageName: string)`              | Registers controller's action to be executed when socket receives message with given name.                                                                                                                                                                                 |
 | `@OnConnect()`                                 | Registers controller's action to be executed when client connects to the socket.                                                                                                                                                                                           |
+| `@OnDisconnecting()`                           | Registers controller's action to be executed when client is going to be disconnected from the socket.                                                                                                                                                                                      |
 | `@OnDisconnect()`                              | Registers controller's action to be executed when client disconnects from the socket.                                                                                                                                                                                      |
 | `@ConnectedSocket()`                           | Injects connected client's socket object to the controller action.                                                                                                                                                                                                         |
 | `@SocketIO()`                                  | Injects socket.io object that initialized a connection.                                                                                                                                                                                                                    |

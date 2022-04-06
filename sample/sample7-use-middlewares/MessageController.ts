@@ -1,6 +1,9 @@
 import { OnConnect, SocketController, ConnectedSocket, OnDisconnect, MessageBody, OnMessage } from '../../src/index';
 import { Message } from './Message';
+import { UseMiddleware } from '../../src/decorator/UseMiddleware';
+import { AuthenticationMiddleware } from './AuthenticationMiddleware';
 
+@UseMiddleware(AuthenticationMiddleware)
 @SocketController()
 export class MessageController {
   @OnConnect()

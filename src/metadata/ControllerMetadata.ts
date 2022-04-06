@@ -1,6 +1,7 @@
 import { ActionMetadata } from './ActionMetadata';
 import { SocketControllerMetadataArgs } from './args/SocketControllerMetadataArgs';
 import { getFromContainer } from '../container';
+import { UseMetadata } from './UseMetadata';
 
 export class ControllerMetadata {
   // -------------------------------------------------------------------------
@@ -21,6 +22,11 @@ export class ControllerMetadata {
    * Base route for all actions registered in this controller.
    */
   namespace: string | RegExp;
+
+  /**
+   * Middleware "use"-s applied to a whole controller.
+   */
+  uses: UseMetadata[];
 
   // -------------------------------------------------------------------------
   // Constructor
