@@ -97,6 +97,7 @@ __exportStar(require("./decorator/SocketQueryParam"), exports);
 __exportStar(require("./decorator/ConnectedSocket"), exports);
 __exportStar(require("./decorator/OnConnect"), exports);
 __exportStar(require("./decorator/OnDisconnect"), exports);
+__exportStar(require("./decorator/OnDisconnecting"), exports);
 __exportStar(require("./decorator/OnMessage"), exports);
 __exportStar(require("./decorator/EmitOnSuccess"), exports);
 __exportStar(require("./decorator/EmitOnFail"), exports);

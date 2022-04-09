@@ -10,4 +10,5 @@ exports.ActionTypes = ActionTypes;
 ActionTypes.MESSAGE = 'message';
 ActionTypes.CONNECT = 'connection';
 ActionTypes.DISCONNECT = 'disconnection';
+ActionTypes.DISCONNECTING = 'disconnecting';
 //# sourceMappingURL=ActionTypes.js.map

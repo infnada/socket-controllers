@@ -81,6 +81,13 @@ class SocketControllerExecutor {
                         .then(result => this.handleSuccessResult(result, action, socket))
                         .catch(error => this.handleFailResult(error, action, socket));
                 }
+                else if (action.type === ActionTypes_1.ActionTypes.DISCONNECTING) {
+                    socket.on('disconnecting', () => {
+                        this.handleAction(action, { socket: socket })
+                            .then(result => this.handleSuccessResult(result, action, socket))
+                            .catch(error => this.handleFailResult(error, action, socket));
+                    });
+                }
                 else if (action.type === ActionTypes_1.ActionTypes.DISCONNECT) {
                     socket.on('disconnect', () => {
                         this.handleAction(action, { socket: socket })
